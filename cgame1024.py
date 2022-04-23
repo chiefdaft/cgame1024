@@ -116,17 +116,6 @@ def mirror_v(mx):
     return mirror_mx
 
 
-def game_over():
-    """ End the game and tell the user it's over """
-    print(f"You scored {score}, too bad but it's G A M E  O V E R !")
-    quit()
-
-
-def you_won():
-    """ End the game and tell the user he/she has won """
-    print(f"You scored {score}, and Y O U   H A V E   W O N ! !")
-
-
 def get_random_empty_cell(cells):
     """ Find the squares with value 0, these are the empty ones """
     ecls = []
@@ -158,11 +147,11 @@ def merge_cells_in_trow(trow):
     while l < ls:
         if srow[m] == srow[l]:
             srow[m] += 1
-            if m == 10:
-                you_won()
             srow[l] = 0
             global score
             score += 2**srow[m]
+            if m == 10:
+                game_won()
             m += 2
             l += 2
         else:
@@ -206,9 +195,21 @@ def get_dir(inp):
         return transl_dir[inp]
     except KeyError:
         return "neutral"
+def game_end():
+    termios.tcsetattr(sys.stdin, termios.TCSADRAIN, orig_settings)
+    quit()
 
+def game_over():
+    """ End the game and tell the user it's over """
+    print(f"You scored {score}, too bad but it's G A M E  O V E R !")
+    game_end()
 
-def run_game(squares, inp=""):
+def game_won():
+    """ End the game and tell the user he/she has won """
+    print(f"You scored {score}, and Y O U   H A V E   W O N ! !")
+    game_end()
+
+def game_run(squares, inp=""):
     dir = get_dir(inp)
     clear_console()
     print_top_margin()
@@ -227,15 +228,14 @@ def run_game(squares, inp=""):
 
 tty.setcbreak(sys.stdin)
 keystr = 0
-run_game(squares)
+game_run(squares)
 while True:
     print("?> (Druk X om af te breken)")
     keystr = sys.stdin.read(1)[0]
     if keystr in transl_dir.keys():
-        squares = run_game(squares, keystr)
+        squares = game_run(squares, keystr)
     elif keystr == 'X':
         break
     else:
-        squares = run_game(squares, "neutral")
-termios.tcsetattr(sys.stdin, termios.TCSADRAIN, orig_settings)
-quit()
+        squares = game_run(squares, "neutral")
+game_end()
