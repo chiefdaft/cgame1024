@@ -8,9 +8,11 @@ import os
 import math
 import random
 from random import randint
-import tty
-import sys
-import termios
+if os.name == 'posix':
+    import tty
+    import sys
+    import termios
+
 orig_settings = termios.tcgetattr(sys.stdin)
 
 # define size of the grid
@@ -144,10 +146,13 @@ def merge_cells_in_trow(trow):
     srow = list(filter(lambda c: c != 0, trow))
     ls = len(srow)
     m, l = 0, 1
+    zeros = []
     while l < ls:
         if srow[m] == srow[l]:
             srow[m] += 1
             srow[l] = 0
+            # Keep track of the removed holes, and append them later on
+            zeros.append(l)
             global score
             score += 2**srow[m]
             if m == 10:
@@ -157,6 +162,10 @@ def merge_cells_in_trow(trow):
         else:
             m += 1
             l += 1
+    # remove the holes left by the merged cells
+    for z in range(len(zeros)):
+        srow.pop(zeros[z])
+        srow.append(0)
     srow += [0 for i in range(len(trow) - ls)]
     return srow
 
@@ -165,15 +174,15 @@ def move_cells(squares, dir):
     """Move all cells in the indicated direction and merge equally valued cells"""
     if dir not in dir_transp.keys():
         return
-    tempSqrs = squares
+    temp_sqrs = squares
     # in case of up or down, transpose
     if dir_transp[dir][0] == -1:
-        tempSqrs = transpose(squares)
+        temp_sqrs = transpose(squares)
     # in case of right or down, mirror
     if dir_transp[dir][1] == -1:
-        tempSqrs = mirror_v(tempSqrs)
+        temp_sqrs = mirror_v(temp_sqrs)
     merged_cells = []
-    for row in tempSqrs:
+    for row in temp_sqrs:
         merged_cells.append(merge_cells_in_trow(row))
     if dir_transp[dir][1] == -1:
         # mirror back
@@ -230,7 +239,7 @@ tty.setcbreak(sys.stdin)
 keystr = 0
 game_run(squares)
 while True:
-    print("?> (Druk X om af te breken)")
+    print("?> (Press X to stop the game)")
     keystr = sys.stdin.read(1)[0]
     if keystr in transl_dir.keys():
         squares = game_run(squares, keystr)
