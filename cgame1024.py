@@ -230,7 +230,7 @@ tty.setcbreak(sys.stdin)
 keystr = 0
 game_run(squares)
 while True:
-    print("?> (Druk X om af te breken)")
+    print("?> (Press X to exit the game)")
     keystr = sys.stdin.read(1)[0]
     if keystr in transl_dir.keys():
         squares = game_run(squares, keystr)
