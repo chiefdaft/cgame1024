@@ -14,12 +14,6 @@ class Game1024:
         self.cols = cols
         self.squares = [[0] * cols for i in range(rows)]
         self.score= 0
-        self.dir_transp = {
-            "left": (1, 1),
-            "right": (1, -1),
-            "up": (-1, 1),
-            "down": (-1, -1),
-        }
         
         self.transl_dir = {
             "a": "left",
