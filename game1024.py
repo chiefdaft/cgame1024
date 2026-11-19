@@ -31,6 +31,8 @@ class Game1024:
             "up": (-1, 1),
             "down": (-1, -1),
         }
+    def sound_score(self):
+        pass
 
     def transpose(self, mx):
         """Transpose a matrix, a list with lists"""
@@ -105,6 +107,7 @@ class Game1024:
                     self.won()
                 m += 2
                 l += 2
+                self.sound_score()
             else:
                 m += 1
                 l += 1

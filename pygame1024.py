@@ -18,6 +18,10 @@ off_set_x, off_set_y = 24, 20
 screen_bgcolor = (10, 10, 10)
 screen_fgcolor = (250,250, 250)
 
+pygame.init()
+chirp = pygame.mixer.Sound(file="./sounds/37191__volivieri__digital-chirp.wav")
+boohoo = pygame.mixer.Sound(file="./sounds/577972__boxwell__comical-scream-woman.wav")
+
 # Define some console colors
 W = pygame.Color(255,255,255,1)  # white (normal)
 R = pygame.Color(255,0,0,1)  # red
@@ -70,11 +74,28 @@ class pygame1024(game1024.Game1024):
         self.squares = self.step(dir)
         self.print_grid(background, font_game)
         return self.squares
+    
+    def end(self):
+        pygame.quit()
+        quit()
 
+    def over(self):
+        """Tell the user the game is over"""
+        # create pop-up etc
+        boohoo.play()
+        while pygame.mixer.get_busy():
+            pygame.time.delay(10)
+            pygame.event.poll()
+
+        self.end()
+
+    def sound_score(self):
+        chirp.play()
 
 def main():
     # Initialise screen
-    pygame.init()
+
+
     screen = pygame.display.set_mode((screen_width, screen_height))
     pygame.display.set_caption('Game1024')
     # Fill background
@@ -117,6 +138,7 @@ def main():
     while run:
         for event in pygame.event.get():
             if event.type == QUIT:
+                run = False
                 return
             if event.type == KEYDOWN:
                 if event.key == K_UP or event.key == K_w:
@@ -144,11 +166,7 @@ def main():
                     
                     pygame.display.flip()
                     wis_score = pygame.Rect(score_pos.left, 0, score_pos.width, score_pos.height)
-
-    # screen.blit(background, (0, 0))
-    # pygame.display.flip()
-    
-
+    pygame.quit()
 
 if __name__=="__main__":
     # call the main function
