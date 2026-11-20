@@ -18,10 +18,19 @@ h1 { font-size: 11vmin; color: #00ffff; line-height: 1; }
 .tile.small { font-size: 7vmin; }
 .tile.pop { animation: pop .15s ease-out; }
 @keyframes pop { from { transform: scale(.6); } to { transform: scale(1); } }
-.v1  { background:#00ffff; } .v2  { background:#ffffff; } .v3 { background:#e6e6e6; }
-.v4  { background:#ff3b3b; } .v5  { background:#3bff3b; } .v6 { background:#ff7f00; }
-.v7  { background:#4a6bff; color:#fff; } .v8 { background:#a020a0; color:#fff; }
-.v9  { background:#ff00ff; } .v10 { background:#ffd700; } .v11 { background:#ffd700; }
+:root { --c1:#00ffff; --c2:#ffffff; --c3:#e6e6e6; --c4:#ff3b3b; --c5:#3bff3b; --c6:#ff7f00;
+        --c7:#4a6bff; --c8:#a020a0; --c9:#ff00ff; --c10:#ffd700; --c11:#ffd700; }
+.v1  { background: var(--c1); }  .v2  { background: var(--c2); }  .v3  { background: var(--c3); }
+.v4  { background: var(--c4); }  .v5  { background: var(--c5); }  .v6  { background: var(--c6); }
+.v7  { background: var(--c7); color:#fff; }  .v8 { background: var(--c8); color:#fff; }
+.v9  { background: var(--c9); }  .v10 { background: var(--c10); } .v11 { background: var(--c11); }
+/* Merge: colour fades from the old tiles' colour to the new one, with a small pulse */
+.tile.merge { animation: merge .3s ease-out; }
+@keyframes merge {
+  0%   { background: var(--from); transform: scale(1); }
+  40%  { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
 #overlay { position: absolute; inset: 0; background: rgba(0,0,0,.75); display: flex;
   align-items: center; justify-content: center; text-align: center; }
 #overlay > div { background: #ff7f00; padding: 6vmin 8vmin; border-radius: 3vmin; }

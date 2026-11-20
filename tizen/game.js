@@ -94,19 +94,19 @@
 
   /* Slide and merge one row to the left. Returns {row, gained, reached} */
   function slideRow(row) {
-    var s = row.filter(function (v) { return v; }), out = [], gained = 0, reached = false;
+    var s = row.filter(function (v) { return v; }), out = [], gained = 0, reached = false, mergedAt = [];
     for (var i = 0; i < s.length; i++) {
       if (i + 1 < s.length && s[i] === s[i + 1]) {
         var v = s[i] + 1;
-        out.push(v); gained += Math.pow(2, v); if (v === WIN) reached = true; i++;
+        mergedAt.push(out.length); out.push(v); gained += Math.pow(2, v); if (v === WIN) reached = true; i++;
       } else out.push(s[i]);
     }
     while (out.length < N) out.push(0);
-    return { row: out, gained: gained, reached: reached };
+    return { row: out, gained: gained, reached: reached, mergedAt: mergedAt };
   }
 
   function move(dir) {
-    var changed = false, gained = 0, reached = false, merged = false;
+    var changed = false, gained = 0, reached = false, merged = false, mergedCells = {};
     for (var k = 0; k < N; k++) {
       var line = [];
       for (var j = 0; j < N; j++) {
@@ -119,10 +119,15 @@
         var c = dir === 'left' ? j : dir === 'right' ? N - 1 - j : k;
         if (board[r][c] !== res.row[j]) { changed = true; board[r][c] = res.row[j]; }
       }
+      res.mergedAt.forEach(function (jj) {
+        var mr = dir === 'left' ? k : dir === 'right' ? k : dir === 'up' ? jj : N - 1 - jj;
+        var mc = dir === 'left' ? jj : dir === 'right' ? N - 1 - jj : k;
+        mergedCells[mr * N + mc] = true;
+      });
       if (res.gained) merged = true;
       gained += res.gained; reached = reached || res.reached;
     }
-    return { changed: changed, gained: gained, reached: reached, merged: merged };
+    return { changed: changed, gained: gained, reached: reached, merged: merged, mergedCells: mergedCells };
   }
 
   function canMove() {
@@ -134,12 +139,14 @@
     return false;
   }
 
-  function render(newPos) {
+  function render(newPos, mergedCells) {
     for (var r = 0; r < N; r++) for (var c = 0; c < N; c++) {
       var v = board[r][c], t = tiles[r * N + c];
       t.textContent = v ? Math.pow(2, v) : '';
+      var isMerge = mergedCells && mergedCells[r * N + c] && v > 1;
+      if (isMerge) t.style.setProperty('--from', 'var(--c' + Math.min(v - 1, 11) + ')');  // colour of the two old tiles
       t.className = 'tile' + (v ? ' v' + Math.min(v, 11) : '') + (v > 6 ? ' small' : '') +
-        (newPos && newPos[0] === r && newPos[1] === c ? ' pop' : '');
+        (newPos && newPos[0] === r && newPos[1] === c ? ' pop' : '') + (isMerge ? ' merge' : '');
     }
     scoreEl.textContent = score; bestEl.textContent = best;
   }
@@ -165,7 +172,7 @@
     if (score > best) { best = score; try { localStorage.setItem('best1024', best); } catch (e) {} }
     var p = addRandom();
     if (res.merged) snd('ting');   // start the sound first, then draw
-    render(p);
+    render(p, res.mergedCells);
     if (res.reached && !keepPlaying) {
       won = true; snd('cheer');
       showOverlay('YOU WIN!', 'You reached 1024!  Press OK to continue.');
