@@ -1,0 +1,28 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    compileSdk 32
+
+    defaultConfig {
+        applicationId "nl.sequels.game1024"
+        minSdk 30          // Wear OS 3 (Galaxy Watch 4 and newer)
+        targetSdk 32
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release { minifyEnabled false }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions { jvmTarget = '1.8' }
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+}
