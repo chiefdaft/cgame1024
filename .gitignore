@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.pyc
+
+# Editor
+.vscode/
+
+# Tizen build output and signing files (created by `tizen package`)
+*.wgt
+tizen/.manifest.tmp
+tizen/author-signature.xml
+tizen/signature1.xml
+*.p12
