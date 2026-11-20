@@ -10,13 +10,21 @@ h1 { font-size: 11vmin; color: #00ffff; line-height: 1; }
 .box span { display: block; font-size: 2.4vmin; color: #999; }
 .box strong { font-size: 6vmin; }
 .help { margin-top: 4vmin; font-size: 2.4vmin; color: #999; line-height: 1.6; }
-#board { width: 88vmin; height: 88vmin; background: #1c1c1c; border-radius: 2vmin;
+#board { --cell: 20.125vmin; --step: 21.625vmin;
+  position: relative; width: 88vmin; height: 88vmin; background: #1c1c1c; border-radius: 2vmin;
   padding: 1.5vmin; display: grid; grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(4, 1fr); gap: 1.5vmin; }
-.tile { border-radius: 1.5vmin; background: #2a2a2a; color: #0a0a0a; display: flex;
+.cell { border-radius: 1.5vmin; background: #2a2a2a; }
+#tiles { position: absolute; left: 1.5vmin; top: 1.5vmin; width: 85vmin; height: 85vmin; }
+/* A tile is positioned with --r/--c; the transform transition makes it slide smoothly */
+.tile { position: absolute; left: 0; top: 0; width: var(--cell); height: var(--cell);
+  transform: translate(calc(var(--c) * var(--step)), calc(var(--r) * var(--step)));
+  transition: transform .12s ease-in-out; }
+.inner { width: 100%; height: 100%; border-radius: 1.5vmin; color: #0a0a0a; display: flex;
   align-items: center; justify-content: center; font-weight: bold; font-size: 9vmin; }
-.tile.small { font-size: 7vmin; }
-.tile.pop { animation: pop .15s ease-out; }
+.inner.small { font-size: 7vmin; }
+/* New tile appears after the slide has finished */
+.inner.pop { animation: pop .15s ease-out .12s backwards; }
 @keyframes pop { from { transform: scale(.6); } to { transform: scale(1); } }
 :root { --c1:#00ffff; --c2:#ffffff; --c3:#e6e6e6; --c4:#ff3b3b; --c5:#3bff3b; --c6:#ff7f00;
         --c7:#4a6bff; --c8:#a020a0; --c9:#ff00ff; --c10:#ffd700; --c11:#ffd700; }
@@ -25,7 +33,7 @@ h1 { font-size: 11vmin; color: #00ffff; line-height: 1; }
 .v7  { background: var(--c7); color:#fff; }  .v8 { background: var(--c8); color:#fff; }
 .v9  { background: var(--c9); }  .v10 { background: var(--c10); } .v11 { background: var(--c11); }
 /* Merge: colour fades from the old tiles' colour to the new one, with a small pulse */
-.tile.merge { animation: merge .3s ease-out; }
+.inner.merge { animation: merge .3s ease-out; }
 @keyframes merge {
   0%   { background: var(--from); transform: scale(1); }
   40%  { transform: scale(1.12); }

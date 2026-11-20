@@ -3,12 +3,11 @@
 (function () {
   'use strict';
   var N = 4, WIN = 10;
-  var board, score, best = 0, over, won, keepPlaying;
+  var score, best = 0, over, won, keepPlaying;
   var boardEl = document.getElementById('board');
   var scoreEl = document.getElementById('score');
   var bestEl = document.getElementById('best');
   var overlay = document.getElementById('overlay');
-  var tiles = [];
 
   // Sound: decode each file once with the Web Audio API and replay the buffer
   // (works for rapid, overlapping plays). Falls back to a pool of Audio elements.
@@ -71,97 +70,140 @@
   });
   try { best = parseInt(localStorage.getItem('best1024'), 10) || 0; } catch (e) {}
 
+  /* ---- Board: static background cells + a layer of animated tile objects ---- */
+  var SLIDE = 120;          // ms, must match the transform transition in style.css
+  var grid, gen = 0;        // grid[r][c] = tile object or null; gen invalidates old timers
+  var layer;
+
   for (var i = 0; i < N * N; i++) {
-    var d = document.createElement('div');
-    d.className = 'tile';
-    boardEl.appendChild(d);
-    tiles.push(d);
+    var cell = document.createElement('div');
+    cell.className = 'cell';
+    boardEl.appendChild(cell);
   }
+  layer = document.createElement('div');
+  layer.id = 'tiles';
+  boardEl.appendChild(layer);
 
   function emptyCells() {
     var e = [];
-    for (var r = 0; r < N; r++) for (var c = 0; c < N; c++) if (!board[r][c]) e.push([r, c]);
+    for (var r = 0; r < N; r++) for (var c = 0; c < N; c++) if (!grid[r][c]) e.push([r, c]);
     return e;
   }
+
+  function setPos(t) {
+    t.el.style.setProperty('--r', t.r);
+    t.el.style.setProperty('--c', t.c);
+  }
+
+  /* Update the visible number/colour of a tile. merged => colour fade + pulse. */
+  function refresh(t, merged) {
+    var v = t.v, inner = t.inner;
+    inner.textContent = Math.pow(2, v);
+    if (merged && v > 1) inner.style.setProperty('--from', 'var(--c' + Math.min(v - 1, 11) + ')');
+    inner.className = 'inner v' + Math.min(v, 11) + (v > 6 ? ' small' : '') +
+      (t.isNew ? ' pop' : '') + (merged ? ' merge' : '');
+  }
+
+  function makeTile(r, c, v, isNew) {
+    var el = document.createElement('div'), inner = document.createElement('div');
+    el.className = 'tile';
+    el.appendChild(inner);
+    var t = { el: el, inner: inner, r: r, c: c, v: v, isNew: !!isNew };
+    setPos(t);
+    refresh(t, false);
+    t.isNew = false;
+    layer.appendChild(el);
+    grid[r][c] = t;
+    return t;
+  }
+
+  function removeTile(t) { if (t.el.parentNode) t.el.parentNode.removeChild(t.el); }
 
   function addRandom() {
     var e = emptyCells();
     if (!e.length) return null;
     var p = e[Math.floor(Math.random() * e.length)];
-    board[p[0]][p[1]] = Math.random() < 0.5 ? 1 : 2;   // 2 or 4
-    return p;
+    return makeTile(p[0], p[1], Math.random() < 0.5 ? 1 : 2, true);   // 2 or 4
   }
 
-  /* Slide and merge one row to the left. Returns {row, gained, reached} */
-  function slideRow(row) {
-    var s = row.filter(function (v) { return v; }), out = [], gained = 0, reached = false, mergedAt = [];
-    for (var i = 0; i < s.length; i++) {
-      if (i + 1 < s.length && s[i] === s[i + 1]) {
-        var v = s[i] + 1;
-        mergedAt.push(out.length); out.push(v); gained += Math.pow(2, v); if (v === WIN) reached = true; i++;
-      } else out.push(s[i]);
-    }
-    while (out.length < N) out.push(0);
-    return { row: out, gained: gained, reached: reached, mergedAt: mergedAt };
+  /* Cell (row, col) of position j along line k for a given direction. */
+  function lineCell(dir, k, j) {
+    if (dir === 'left')  return [k, j];
+    if (dir === 'right') return [k, N - 1 - j];
+    if (dir === 'up')    return [j, k];
+    return [N - 1 - j, k];
   }
 
   function move(dir) {
-    var changed = false, gained = 0, reached = false, merged = false, mergedCells = {};
+    var changed = false, gained = 0, reached = false, merged = false, pending = [];
     for (var k = 0; k < N; k++) {
       var line = [];
       for (var j = 0; j < N; j++) {
-        line.push(dir === 'left' ? board[k][j] : dir === 'right' ? board[k][N - 1 - j]
-                : dir === 'up' ? board[j][k] : board[N - 1 - j][k]);
+        var p = lineCell(dir, k, j), t = grid[p[0]][p[1]];
+        if (t) line.push(t);
       }
-      var res = slideRow(line);
-      for (j = 0; j < N; j++) {
-        var r = dir === 'left' ? k : dir === 'right' ? k : dir === 'up' ? j : N - 1 - j;
-        var c = dir === 'left' ? j : dir === 'right' ? N - 1 - j : k;
-        if (board[r][c] !== res.row[j]) { changed = true; board[r][c] = res.row[j]; }
+      var slot = 0;
+      for (var i = 0; i < line.length; i++) {
+        var cur = line[i], pos = lineCell(dir, k, slot);
+        if (i + 1 < line.length && line[i + 1].v === cur.v) {
+          var other = line[i + 1];
+          cur.v += 1;
+          gained += Math.pow(2, cur.v); merged = true; if (cur.v === WIN) reached = true;
+          other.r = pos[0]; other.c = pos[1]; setPos(other);   // slides onto cur, then vanishes
+          pending.push([cur, other]);
+          changed = true; i++;
+        }
+        if (cur.r !== pos[0] || cur.c !== pos[1]) changed = true;
+        cur.r = pos[0]; cur.c = pos[1]; setPos(cur);
+        slot++;
       }
-      res.mergedAt.forEach(function (jj) {
-        var mr = dir === 'left' ? k : dir === 'right' ? k : dir === 'up' ? jj : N - 1 - jj;
-        var mc = dir === 'left' ? jj : dir === 'right' ? N - 1 - jj : k;
-        mergedCells[mr * N + mc] = true;
-      });
-      if (res.gained) merged = true;
-      gained += res.gained; reached = reached || res.reached;
     }
-    return { changed: changed, gained: gained, reached: reached, merged: merged, mergedCells: mergedCells };
+    // rebuild the grid from the surviving tiles
+    var removed = pending.map(function (pr) { return pr[1]; });
+    var old = grid;
+    grid = []; for (var r = 0; r < N; r++) grid.push([null, null, null, null]);
+    for (r = 0; r < N; r++) for (var c = 0; c < N; c++) {
+      var tl = old[r][c];
+      if (tl && removed.indexOf(tl) < 0) grid[tl.r][tl.c] = tl;
+    }
+    var myGen = gen;
+    pending.forEach(function (pr) {                     // after the slide: drop the absorbed tile, show merge
+      setTimeout(function () {
+        removeTile(pr[1]);
+        if (myGen === gen) refresh(pr[0], true);
+      }, SLIDE);
+    });
+    return { changed: changed, gained: gained, reached: reached, merged: merged };
   }
 
   function canMove() {
     if (emptyCells().length) return true;
     for (var r = 0; r < N; r++) for (var c = 0; c < N; c++) {
-      if (c + 1 < N && board[r][c] === board[r][c + 1]) return true;
-      if (r + 1 < N && board[r][c] === board[r + 1][c]) return true;
+      if (c + 1 < N && grid[r][c].v === grid[r][c + 1].v) return true;
+      if (r + 1 < N && grid[r][c].v === grid[r + 1][c].v) return true;
     }
     return false;
   }
 
-  function render(newPos, mergedCells) {
-    for (var r = 0; r < N; r++) for (var c = 0; c < N; c++) {
-      var v = board[r][c], t = tiles[r * N + c];
-      t.textContent = v ? Math.pow(2, v) : '';
-      var isMerge = mergedCells && mergedCells[r * N + c] && v > 1;
-      if (isMerge) t.style.setProperty('--from', 'var(--c' + Math.min(v - 1, 11) + ')');  // colour of the two old tiles
-      t.className = 'tile' + (v ? ' v' + Math.min(v, 11) : '') + (v > 6 ? ' small' : '') +
-        (newPos && newPos[0] === r && newPos[1] === c ? ' pop' : '') + (isMerge ? ' merge' : '');
-    }
-    scoreEl.textContent = score; bestEl.textContent = best;
-  }
+  function updateScore() { scoreEl.textContent = score; bestEl.textContent = best; }
 
   function showOverlay(title, text) {
-    document.getElementById('ov-title').textContent = title;
-    document.getElementById('ov-text').textContent = text;
-    overlay.classList.remove('hidden');
+    var myGen = gen;
+    setTimeout(function () {                 // let the last move finish animating first
+      if (myGen !== gen) return;
+      document.getElementById('ov-title').textContent = title;
+      document.getElementById('ov-text').textContent = text;
+      overlay.classList.remove('hidden');
+    }, SLIDE + 250);
   }
 
   function newGame() {
-    board = []; for (var r = 0; r < N; r++) board.push([0, 0, 0, 0]);
+    gen++;
+    while (layer.firstChild) layer.removeChild(layer.firstChild);
+    grid = []; for (var r = 0; r < N; r++) grid.push([null, null, null, null]);
     score = 0; over = false; won = false; keepPlaying = false;
     overlay.classList.add('hidden');
-    addRandom(); addRandom(); render();
+    addRandom(); addRandom(); updateScore();
   }
 
   function onDir(dir) {
@@ -170,9 +212,9 @@
     if (!res.changed) return;
     score += res.gained;
     if (score > best) { best = score; try { localStorage.setItem('best1024', best); } catch (e) {} }
-    var p = addRandom();
-    if (res.merged) snd('ting');   // start the sound first, then draw
-    render(p, res.mergedCells);
+    if (res.merged) snd('ting');
+    addRandom();
+    updateScore();
     if (res.reached && !keepPlaying) {
       won = true; snd('cheer');
       showOverlay('YOU WIN!', 'You reached 1024!  Press OK to continue.');
