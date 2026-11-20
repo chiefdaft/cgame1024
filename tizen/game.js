@@ -228,7 +228,15 @@
     try { tizen.application.getCurrentApplication().exit(); } catch (e) { window.close(); }
   }
 
+  var exitEl = document.getElementById('exit'), exitAsk = false;
+  function askExit(show) { exitAsk = show; exitEl.classList.toggle('hidden', !show); }
+
   document.addEventListener('keydown', function (e) {
+    if (exitAsk) {                                // exit popup: OK = leave, RETURN = back to game
+      if (e.keyCode === 13) exitApp();
+      else if (e.keyCode === 10009 || e.keyCode === 27) askExit(false);
+      return;
+    }
     switch (e.keyCode) {
       case 37: case 65: onDir('left'); break;
       case 38: case 87: onDir('up'); break;
@@ -238,7 +246,7 @@
         if (won && !keepPlaying) { keepPlaying = true; overlay.classList.add('hidden'); }
         else newGame();
         break;
-      case 10009: case 27: exitApp(); break;     // Samsung RETURN key / Esc
+      case 10009: case 27: askExit(true); break;  // Samsung RETURN key / Esc: ask before exiting
     }
   });
 

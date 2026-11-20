@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Game 1024 - App Description</title>
+<style>
+@page { size: 13.333in 7.5in; margin: 0; }
+:root { --ink:#10202e; --muted:#4d5d6b; --teal:#007c89; --cyan:#00d8e0; --card:#eef3f6; --line:#cfd9e0; --dark:#0a0a0a; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #fff; color: var(--ink); font-family: "Liberation Sans", Arial, Helvetica, sans-serif; }
+.page { width: 13.333in; height: 7.5in; padding: .55in .7in .5in; position: relative; overflow: hidden; page-break-after: always; break-after: page; background:#fff; }
+.page:last-child { page-break-after: auto; break-after: auto; }
+h1 { font-size: 32pt; line-height: 1.1; margin-bottom: .22in; }
+h2 { font-size: 18pt; margin-bottom: .1in; color: var(--teal); }
+p, li, td, th { font-size: 14pt; line-height: 1.35; }
+.sub { font-size: 14pt; color: var(--muted); margin-top: -.12in; margin-bottom: .2in; }
+.foot { position: absolute; left: .7in; right: .7in; bottom: .22in; font-size: 10pt; color: var(--muted); display: flex; justify-content: space-between; }
+code { font-family: "DejaVu Sans Mono", monospace; font-size: 12.5pt; background: var(--card); padding: 0 4px; border-radius: 4px; }
+
+/* cover */
+.cover { background: var(--dark); color: #fff; padding: 0; }
+.cover .txt { position: absolute; left: .9in; top: 2.1in; width: 5.6in; }
+.cover h1 { font-size: 54pt; color: var(--cyan); margin-bottom: .1in; }
+.cover .k { font-size: 20pt; color: #e8eef2; margin-bottom: .35in; }
+.cover .m { font-size: 15pt; color: #9fb0bc; line-height: 1.6; }
+.cover img { position: absolute; right: .7in; top: 1.35in; width: 6.0in; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,216,224,.18); }
+
+table { border-collapse: collapse; width: 100%; }
+th { text-align: left; background: var(--ink); color: #fff; padding: 7px 12px; font-size: 13pt; }
+td { padding: 7px 12px; border-bottom: 1px solid var(--line); vertical-align: top; font-size: 13pt; }
+tr:nth-child(even) td { background: #f7fafb; }
+.cols { display: flex; gap: .35in; }
+.cols > div { flex: 1; }
+.card { background: var(--card); border-radius: 12px; padding: .2in .26in; }
+.card ul { padding-left: .22in; }
+.card li { margin-bottom: .07in; }
+.yes h2 { color: #1b7a3a; } .no h2 { color: #a23b2a; }
+.num { display: inline-flex; width: .3in; height: .3in; border-radius: 50%; background: var(--teal); color: #fff; font-weight: bold; font-size: 12pt; align-items: center; justify-content: center; }
+.small { font-size: 12pt; color: var(--muted); }
+.mand { color: #a23b2a; font-weight: bold; }
+
+/* shots with callouts */
+.shot { position: relative; }
+.shot img { width: 100%; display: block; border-radius: 10px; border: 1px solid var(--line); }
+.badge { position: absolute; width: .32in; height: .32in; border-radius: 50%; background: #ff7f00; color: #fff; font-weight: bold; font-size: 12pt; display: flex; align-items: center; justify-content: center; transform: translate(-50%,-50%); border: 2px solid #fff; }
+.cap { font-size: 12pt; color: var(--muted); margin-top: .06in; text-align: center; }
+.legend p { margin-bottom: .14in; font-size: 13pt; display: flex; align-items: flex-start; gap: .12in; }
+.legend p .num { flex: none; }
+.legend .num { background: #ff7f00; }
+.three { display: flex; gap: .25in; }
+.three > div { flex: 1; }
+.three img { width: 100%; border-radius: 10px; border: 1px solid var(--line); }
+.three h2 { font-size: 16pt; margin: .1in 0 .04in; color: var(--ink); }
+.three p { font-size: 12.5pt; }
+
+/* flow */
+.flow { width: 100%; }
+.flow text { font-family: "Liberation Sans", Arial, sans-serif; }
+</style>
+</head>
+<body>
+
+<!-- 1 cover -->
+<section class="page cover">
+  <div class="txt">
+    <h1>Game 1024</h1>
+    <div class="k">App Description</div>
+    <div class="m">Samsung Smart TV (Tizen) web application<br>Content provider: Sequels B.V.<br>Version 1.0.0<br>20 November 2026</div>
+  </div>
+  <img src="img/d2_mid.jpg" alt="Game 1024 main screen">
+</section>
+
+<!-- 2 revision -->
+<section class="page">
+  <h1>Revision History</h1>
+  <table>
+    <tr><th style="width:12%">Version</th><th style="width:18%">Date</th><th>Description</th><th style="width:22%">Author</th></tr>
+    <tr><td>1.0</td><td>2026.11.20</td><td>Initial version of the app description for Game 1024 v1.0.0</td><td>Jelco Huijser</td></tr>
+  </table>
+  <div class="foot"><span>Game 1024 - App Description</span><span>2</span></div>
+</section>
+
+<!-- 3 contents -->
+<section class="page">
+  <h1>Contents</h1>
+  <div style="font-size:18pt; line-height:1.9">
+    1. About the app: what it does and does not do<br>
+    2. UI structure<br>
+    3. Usage scenario<br>
+    4. Menu &amp; function description<br>
+    5. Game rules and behaviour details<br>
+    6. Key policy<br>
+    7. Technical information, data and permissions<br>
+    8. How to change languages
+  </div>
+  <div class="foot"><span>Game 1024 - App Description</span><span>3</span></div>
+</section>
+
+<!-- 4 about -->
+<section class="page">
+  <h1>About the app</h1>
+  <p class="sub">Game 1024 is a single-player sliding-tile number puzzle, played with the remote control. Slide all tiles; equal tiles merge into one tile of double value. Reach 1024 to win.</p>
+  <div class="cols">
+    <div class="card yes">
+      <h2>What the app does</h2>
+      <ul>
+        <li>Plays a 4 &times; 4 puzzle on one screen, steered with the arrow keys</li>
+        <li>Shows the current score and the best score</li>
+        <li>Stores the best score on the TV (local storage)</li>
+        <li>Plays short sound effects for a merge, a win and game over</li>
+        <li>Asks for confirmation before closing (exit pop-up)</li>
+      </ul>
+    </div>
+    <div class="card no">
+      <h2>What the app does not do</h2>
+      <ul>
+        <li>No network access: it never connects to the internet or other devices</li>
+        <li>No log-in, account, activation or registration</li>
+        <li>No payments, in-app purchases, subscriptions or advertisements</li>
+        <li>No personal data collected, no analytics, no tracking</li>
+        <li>No external links, web views, video playback or broadcast (channel) control</li>
+        <li>Does not request any Tizen privileges</li>
+        <li>Does not save a game in progress (only the best score is stored)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>Game 1024 - App Description</span><span>4</span></div>
+</section>
+
+<!-- 5 UI structure -->
+<section class="page">
+  <h1>UI structure</h1>
+  <p class="sub">The app has one main screen and three pop-ups that appear on top of it.</p>
+  <svg class="flow" viewBox="0 0 1160 400" xmlns="http://www.w3.org/2000/svg">
+    <defs><marker id="a" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#4d5d6b"/></marker></defs>
+    <g font-size="19" text-anchor="middle">
+      <rect x="10" y="150" width="190" height="90" rx="14" fill="#10202e"/>
+      <text x="105" y="190" fill="#fff" font-weight="bold">Launch app</text><text x="105" y="214" fill="#9fb0bc" font-size="15">new game starts</text>
+
+      <rect x="330" y="125" width="260" height="140" rx="14" fill="#007c89"/>
+      <text x="460" y="180" fill="#fff" font-weight="bold" font-size="22">Main game screen</text>
+      <text x="460" y="208" fill="#d7f3f5" font-size="16">4 x 4 board, score, best score</text>
+      <text x="460" y="232" fill="#d7f3f5" font-size="16">arrows = move tiles</text>
+
+      <rect x="830" y="0" width="320" height="100" rx="14" fill="#eef3f6" stroke="#cfd9e0"/>
+      <text x="990" y="38" fill="#10202e" font-weight="bold">Win pop-up (1024)</text><text x="990" y="66" fill="#4d5d6b" font-size="15">OK = continue playing</text>
+
+      <rect x="830" y="150" width="320" height="100" rx="14" fill="#eef3f6" stroke="#cfd9e0"/>
+      <text x="990" y="188" fill="#10202e" font-weight="bold">Game over pop-up</text><text x="990" y="216" fill="#4d5d6b" font-size="15">OK = new game</text>
+
+      <rect x="830" y="300" width="320" height="100" rx="14" fill="#eef3f6" stroke="#cfd9e0"/>
+      <text x="990" y="338" fill="#10202e" font-weight="bold">Exit pop-up</text><text x="990" y="366" fill="#4d5d6b" font-size="15">OK = exit app, RETURN = back</text>
+    </g>
+    <g stroke="#4d5d6b" stroke-width="3" fill="none" marker-end="url(#a)">
+      <line x1="200" y1="195" x2="326" y2="195"/>
+      <line x1="590" y1="160" x2="826" y2="62"/>
+      <line x1="590" y1="195" x2="826" y2="200"/>
+      <line x1="590" y1="230" x2="826" y2="345"/>
+    </g>
+    <g font-size="15" fill="#4d5d6b" text-anchor="middle"><text x="710" y="92" transform="rotate(-14 710 92)">1024 tile reached</text><text x="710" y="188">no move left</text><text x="690" y="318" transform="rotate(26 690 318)">RETURN key</text></g>
+  </svg>
+  <p class="small" style="margin-top:.12in">Every pop-up returns to the main game screen. After the exit pop-up the app closes (OK) or stays on the main screen (RETURN). There are no further menus, settings screens or sub pages.</p>
+  <div class="foot"><span>Game 1024 - App Description</span><span>5</span></div>
+</section>
+
+<!-- 6 usage scenario -->
+<section class="page">
+  <h1>Usage scenario</h1>
+  <p class="sub">No log-in, activation or payment is needed. Every step below can be tested without preparation.</p>
+  <table>
+    <tr><th style="width:5%">#</th><th style="width:34%">User action</th><th>App response</th></tr>
+    <tr><td>1</td><td>Start the app from the Smart Hub</td><td>Main screen appears with two random tiles (2 or 4) and score 0. Best score from earlier sessions is shown.</td></tr>
+    <tr><td>2</td><td>Press UP, DOWN, LEFT or RIGHT</td><td>All tiles slide in that direction. A merge sound plays when tiles combine; one new tile (2 or 4) appears. A key press that moves nothing is ignored.</td></tr>
+    <tr><td>3</td><td>Slide two equal tiles together</td><td>They merge into one tile of double value (colour fades to the new colour). The merged value is added to the score.</td></tr>
+    <tr><td>4</td><td>Create a 1024 tile</td><td>"YOU WIN!" pop-up and a cheer sound. OK continues the game; further play is possible without another win pop-up.</td></tr>
+    <tr><td>5</td><td>Play until the board is full and no tiles can merge</td><td>"GAME OVER" pop-up with the final score and a game-over sound. OK starts a new game.</td></tr>
+    <tr><td>6</td><td>Press OK during play</td><td>A new game starts immediately; the best score is kept.</td></tr>
+    <tr><td>7</td><td>Press RETURN</td><td>"EXIT GAME?" pop-up. OK closes the app, RETURN goes back to the game.</td></tr>
+  </table>
+  <p class="small" style="margin-top:.12in">Tip for testers: a game-over is reached quickly by pressing the four directions in an unplanned order (usually within a few minutes). Creating the 1024 tile takes skill and several minutes.</p>
+  <div class="foot"><span>Game 1024 - App Description</span><span>6</span></div>
+</section>
+
+<!-- 7 main screen -->
+<section class="page">
+  <h1>Menu &amp; function description: main screen</h1>
+  <div class="cols">
+    <div style="flex:2.3">
+      <div class="shot">
+        <img src="img/d2_mid.jpg" alt="Main game screen">
+        <div class="badge" style="left:12%;top:21%">1</div>
+        <div class="badge" style="left:12%;top:47%">2</div>
+        <div class="badge" style="left:12%;top:63%">3</div>
+        <div class="badge" style="left:12%;top:78%">4</div>
+        <div class="badge" style="left:62%;top:7%">5</div>
+      </div>
+      <div class="cap">Main game screen (1920 &times; 1080)</div>
+    </div>
+    <div class="legend" style="flex:1; padding-top:.1in">
+      <p><span class="num">1</span><span>Game title</span></p>
+      <p><span class="num">2</span><span><b>Score</b>: sum of all merged tile values in this game</span></p>
+      <p><span class="num">3</span><span><b>Best</b>: highest score reached on this TV</span></p>
+      <p><span class="num">4</span><span>Key help: arrows move tiles, OK new game, RETURN exit</span></p>
+      <p><span class="num">5</span><span><b>Game board</b>: 4 &times; 4 grid. Tiles show 2, 4, 8 &hellip; 1024 and have a colour per value.</span></p>
+    </div>
+  </div>
+  <div class="foot"><span>Game 1024 - App Description</span><span>7</span></div>
+</section>
+
+<!-- 8 popups -->
+<section class="page">
+  <h1>Menu &amp; function description: pop-ups</h1>
+  <div class="three">
+    <div><img src="img/d4_win.jpg" alt="Win pop-up"><h2>Win pop-up</h2><p>Shown once when a 1024 tile is created. OK continues playing.</p></div>
+    <div><img src="img/d5_over.jpg" alt="Game over pop-up"><h2>Game over pop-up</h2><p>Shown when no move is possible. Displays the score. OK starts a new game.</p></div>
+    <div><img src="img/d3_exit.jpg" alt="Exit pop-up"><h2>Exit pop-up</h2><p>Shown on RETURN. OK closes the app, RETURN returns to the game.</p></div>
+  </div>
+  <div class="foot"><span>Game 1024 - App Description</span><span>8</span></div>
+</section>
+
+<!-- 9 rules -->
+<section class="page">
+  <h1>Game rules and behaviour details</h1>
+  <table>
+    <tr><th style="width:24%">Item</th><th>Behaviour</th></tr>
+    <tr><td>Board</td><td>4 &times; 4 grid; at the start two tiles (2 or 4) are placed on random empty cells</td></tr>
+    <tr><td>Move</td><td>All tiles slide as far as possible in the chosen direction (smooth animation, about 0.12 s). Equal neighbouring tiles merge once per move. If no tile moves, nothing happens.</td></tr>
+    <tr><td>New tile</td><td>After every move that changed the board, one tile appears on a random empty cell: 2 or 4, each with 50% chance</td></tr>
+    <tr><td>Score</td><td>Each merge adds the value of the new tile (4 + 4 = 8 adds 8)</td></tr>
+    <tr><td>Win</td><td>A 1024 tile triggers the win pop-up once per game; play can continue afterwards</td></tr>
+    <tr><td>Game over</td><td>No empty cell and no equal neighbours: game over pop-up</td></tr>
+    <tr><td>Best score</td><td>Saved automatically in local storage on the TV when it is beaten; shown at every start</td></tr>
+    <tr><td>Sound</td><td>Three short effects: merge, win, game over. No background music; volume follows the TV volume</td></tr>
+  </table>
+  <div class="foot"><span>Game 1024 - App Description</span><span>9</span></div>
+</section>
+
+<!-- 10 key policy -->
+<section class="page">
+  <h1>Key policy</h1>
+  <table>
+    <tr><th style="width:20%">Button</th><th>Action</th><th style="width:22%">Remarks</th></tr>
+    <tr><td>ENTER (OK)</td><td>Main screen: start a new game. Win pop-up: continue playing. Game over pop-up: new game. Exit pop-up: close the app.</td><td></td></tr>
+    <tr><td>UP / DOWN / LEFT / RIGHT</td><td>Slide the tiles in that direction (no function while a pop-up is shown, except as listed)</td><td></td></tr>
+    <tr><td>RETURN</td><td>Show the exit pop-up. In the exit pop-up: go back to the game.</td><td class="mand">Samsung Mandatory</td></tr>
+    <tr><td>EXIT</td><td>Close the app and show the broadcasting channel (handled by the system)</td><td class="mand">Samsung Mandatory</td></tr>
+    <tr><td>Ch. Up / Down</td><td>N/R</td><td></td></tr>
+    <tr><td>RED / GREEN / YELLOW / BLUE</td><td>N/R</td><td></td></tr>
+    <tr><td>Number keys, media keys</td><td>N/R</td><td></td></tr>
+    <tr><td>Keyboard W A S D</td><td>Same as UP / LEFT / DOWN / RIGHT (convenience for keyboards)</td><td></td></tr>
+  </table>
+  <p class="small" style="margin-top:.1in">N/R = not responding. In a game app the exit pop-up is displayed on RETURN, as required.</p>
+  <div class="foot"><span>Game 1024 - App Description</span><span>10</span></div>
+</section>
+
+<!-- 11 technical -->
+<section class="page">
+  <h1>Technical information, data and permissions</h1>
+  <div class="cols">
+    <div>
+      <table>
+        <tr><th colspan="2">Application</th></tr>
+        <tr><td style="width:42%">Type</td><td>Tizen web app (HTML5, CSS, JavaScript)</td></tr>
+        <tr><td>Application ID</td><td><code>Gm1024Tvz1.Game1024</code></td></tr>
+        <tr><td>Version</td><td>1.0.0</td></tr>
+        <tr><td>Profile / platform</td><td>tv-samsung, required API version 5.0</td></tr>
+        <tr><td>Screen</td><td>Landscape, laid out for 1920 &times; 1080, scales with the screen size</td></tr>
+        <tr><td>Package size</td><td>About 100 KB</td></tr>
+        <tr><td>Tested on</td><td>Tizen TV emulator</td></tr>
+      </table>
+    </div>
+    <div>
+      <table>
+        <tr><th colspan="2">Data and permissions</th></tr>
+        <tr><td style="width:42%">Tizen privileges</td><td>None requested</td></tr>
+        <tr><td>Network</td><td>None. The only file requests go to the sound files inside the app package.</td></tr>
+        <tr><td>Stored data</td><td>Best score, one number, in the app's local storage</td></tr>
+        <tr><td>Personal data</td><td>None collected or sent</td></tr>
+        <tr><td>Third-party SDKs</td><td>None</td></tr>
+      </table>
+      <p class="small" style="margin-top:.14in">Concept based on the well-known 2048 / 1024 sliding-tile puzzles. Sound effects originate from freesound.org.</p>
+    </div>
+  </div>
+  <div class="foot"><span>Game 1024 - App Description</span><span>11</span></div>
+</section>
+
+<!-- 12 languages -->
+<section class="page">
+  <h1>How to change languages</h1>
+  <table>
+    <tr><th style="width:28%">Items</th><th>Contents</th></tr>
+    <tr><td>How to change languages</td><td>Not applicable. The app has a single language (English) and does not change with the Smart Hub country or OSD language setting. Tile values are numbers, so they are language-neutral.</td></tr>
+  </table>
+  <div class="foot"><span>Game 1024 - App Description</span><span>12</span></div>
+</section>
+
+</body>
+</html>

@@ -39,9 +39,9 @@ h1 { font-size: 11vmin; color: #00ffff; line-height: 1; }
   40%  { transform: scale(1.12); }
   100% { transform: scale(1); }
 }
-#overlay { position: absolute; inset: 0; background: rgba(0,0,0,.75); display: flex;
+#overlay, #exit { position: absolute; inset: 0; background: rgba(0,0,0,.75); display: flex;
   align-items: center; justify-content: center; text-align: center; }
-#overlay > div { background: #ff7f00; padding: 6vmin 8vmin; border-radius: 3vmin; }
-#overlay h2 { font-size: 7vmin; margin-bottom: 2vmin; white-space: pre; }
-#overlay p { font-size: 3.4vmin; }
+#overlay > div, #exit > div { background: #ff7f00; padding: 6vmin 8vmin; border-radius: 3vmin; }
+#overlay h2, #exit h2 { font-size: 7vmin; margin-bottom: 2vmin; white-space: pre; }
+#overlay p, #exit p { font-size: 3.4vmin; }
 .hidden { display: none !important; }
