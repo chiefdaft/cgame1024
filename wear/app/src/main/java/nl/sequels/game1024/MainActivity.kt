@@ -24,6 +24,7 @@ class MainActivity : Activity(), GameView.Listener {
 
     // Haptic feedback instead of sound effects
     override fun onMerge() = buzz(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK))
+    override fun onRotate() = buzz(VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK))
     override fun onWin() = buzz(VibrationEffect.createWaveform(longArrayOf(0, 60, 60, 60, 60, 200), -1))
     override fun onGameOver() = buzz(VibrationEffect.createWaveform(longArrayOf(0, 250, 80, 400), -1))
     override fun onBestChanged(best: Int) { prefs().edit().putInt("best1024", best).apply() }

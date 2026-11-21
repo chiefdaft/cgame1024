@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.graphics.Typeface
+import android.view.InputDevice
 import android.view.MotionEvent
 import android.view.View
 import kotlin.math.abs
@@ -18,6 +19,7 @@ class GameView(context: Context, private val game: Game, private val listener: L
 
     interface Listener {
         fun onMerge()
+        fun onRotate()
         fun onWin()
         fun onGameOver()
         fun onBestChanged(best: Int)
@@ -26,6 +28,7 @@ class GameView(context: Context, private val game: Game, private val listener: L
     private companion object {
         const val SLIDE_END = 0.6f           // fraction of the animation spent sliding
         const val ANIM_MS = 180L
+        const val ROT_STEP = 1f              // accumulated bezel scroll needed for one quarter turn
         val COLORS = intArrayOf(
             0, 0xFF00FFFF.toInt(), 0xFFFFFFFF.toInt(), 0xFFE6E6E6.toInt(), 0xFFFF3B3B.toInt(),
             0xFF3BFF3B.toInt(), 0xFFFF7F00.toInt(), 0xFF4A6BFF.toInt(), 0xFFA020A0.toInt(),
@@ -60,6 +63,12 @@ class GameView(context: Context, private val game: Game, private val listener: L
     private var gap = 0f
     private var cell = 0f
 
+    private var rotAcc = 0f
+
+    init { isFocusable = true; isFocusableInTouchMode = true }
+
+    override fun onAttachedToWindow() { super.onAttachedToWindow(); requestFocus() }
+
     private var downX = 0f
     private var downY = 0f
 
@@ -91,8 +100,17 @@ class GameView(context: Context, private val game: Game, private val listener: L
         if (t < SLIDE_END) {
             val p = ease(t / SLIDE_END)
             for (s in slides) {
-                val r = s.fromR + (s.toR - s.fromR) * p
-                val c = s.fromC + (s.toC - s.fromC) * p
+                var r = s.fromR + (s.toR - s.fromR) * p
+                var c = s.fromC + (s.toC - s.fromC) * p
+                if (s.ringFrom >= 0) {                      // follow the ring around the corners
+                    val f = s.ringFrom + s.ringSteps * p
+                    val i0 = Math.floor(f.toDouble()).toInt()
+                    val fr = f - i0
+                    val a = game.ringCell(i0)
+                    val b = game.ringCell(i0 + 1)
+                    r = a.first + (b.first - a.first) * fr
+                    c = a.second + (b.second - a.second) * fr
+                }
                 drawTile(canvas, s.value, c, r, 1f)
             }
         } else {
@@ -156,14 +174,19 @@ class GameView(context: Context, private val game: Game, private val listener: L
 
     private fun ease(x: Float) = x * (2 - x)
 
-    private fun play(dir: Dir) {
+    private fun play(dir: Dir) = apply(game.move(dir), rotation = false)
+
+    private fun rotate(clockwise: Boolean) = apply(game.rotate(clockwise), rotation = true)
+
+    private fun apply(res: Game.Result?, rotation: Boolean) {
+        if (res == null) return
         val before = game.best
-        val res = game.move(dir) ?: return
         slides = res.slides
         merges = res.merges
         spawn = res.spawn
         animator.cancel()
         animator.start()
+        if (rotation) listener.onRotate()
         if (res.merges.isNotEmpty()) listener.onMerge()
         if (game.best != before) listener.onBestChanged(game.best)
         if (res.reachedWin) listener.onWin() else if (res.gameOver) listener.onGameOver()
@@ -191,6 +214,16 @@ class GameView(context: Context, private val game: Game, private val listener: L
             }
         }
         return true
+    }
+
+    /** Rotary bezel (Galaxy Watch Classic): clockwise / counter-clockwise quarter turn of the outer ring. */
+    override fun onGenericMotionEvent(e: MotionEvent): Boolean {
+        if (e.action == MotionEvent.ACTION_SCROLL && e.isFromSource(InputDevice.SOURCE_ROTARY_ENCODER)) {
+            rotAcc += -e.getAxisValue(MotionEvent.AXIS_SCROLL)       // clockwise => positive
+            if (abs(rotAcc) >= ROT_STEP) { rotate(rotAcc > 0); rotAcc = 0f }
+            return true
+        }
+        return super.onGenericMotionEvent(e)
     }
 
     override fun performClick(): Boolean = super.performClick()

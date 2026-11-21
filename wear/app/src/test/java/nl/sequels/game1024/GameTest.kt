@@ -41,4 +41,34 @@ class GameTest {
         val res = g.move(Dir.RIGHT)
         assertNotNull(res)
     }
+
+    @Test fun clockwiseTurnMovesOuterRingOnly() {
+        val g = Game()
+        val rows = Array(4) { IntArray(4) }
+        rows[0][0] = 1; rows[1][1] = 2; rows[1][0] = 3
+        setGrid(g, rows)
+        g.rotate(true)
+        assertEquals(1, g.grid[0][3])          // top-left corner -> top-right corner
+        assertEquals(3, g.grid[0][2])          // (1,0) -> (0,2): three steps along the ring
+        assertEquals(2, g.grid[1][1])          // inner tile stays
+    }
+
+    @Test fun counterClockwiseTurnMovesOtherWay() {
+        val g = Game()
+        val rows = Array(4) { IntArray(4) }
+        rows[0][0] = 1
+        setGrid(g, rows)
+        g.rotate(false)
+        assertEquals(1, g.grid[3][0])          // top-left -> bottom-left
+    }
+
+    @Test fun fourTurnsOnFullBoardRestoreIt() {
+        val g = Game()
+        val rows = Array(4) { r -> IntArray(4) { c -> r * 4 + c + 1 } }
+        rows[3][3] = rows[3][2]                // keep a merge available so the game is not over
+        setGrid(g, rows)
+        val before = g.grid.map { it.toList() }
+        repeat(4) { assertNotNull(g.rotate(true)) }
+        assertEquals(before, g.grid.map { it.toList() })
+    }
 }

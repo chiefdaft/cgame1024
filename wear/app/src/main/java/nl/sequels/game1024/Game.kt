@@ -23,7 +23,10 @@ class Game(val n: Int = 4, private val rnd: Random = Random.Default) {
     private var keepPlaying = false
 
     /** One tile travelling during a move. [absorbed] tiles vanish into their target cell. */
-    class Slide(val fromR: Int, val fromC: Int, val toR: Int, val toC: Int, val value: Int, val absorbed: Boolean)
+    class Slide(
+        val fromR: Int, val fromC: Int, val toR: Int, val toC: Int, val value: Int, val absorbed: Boolean,
+        val ringFrom: Int = -1, val ringSteps: Int = 0     // set for tiles travelling along the outer ring
+    )
 
     class Result(
         val slides: List<Slide>,
@@ -34,6 +37,16 @@ class Game(val n: Int = 4, private val rnd: Random = Random.Default) {
     )
 
     private fun emptyGrid() = Array(n) { IntArray(n) }
+
+    /** The outer ring (12 cells for a 4x4 board), clockwise starting at the top-left corner. */
+    private val ring: List<Pair<Int, Int>> = ArrayList<Pair<Int, Int>>().apply {
+        for (c in 0 until n) add(0 to c)
+        for (r in 1 until n) add(r to n - 1)
+        for (c in n - 2 downTo 0) add(n - 1 to c)
+        for (r in n - 2 downTo 1) add(r to 0)
+    }
+    val ringSize get() = ring.size
+    fun ringCell(i: Int): Pair<Int, Int> = ring[Math.floorMod(i, ring.size)]
 
     init { newGame() }
 
@@ -113,12 +126,48 @@ class Game(val n: Int = 4, private val rnd: Random = Random.Default) {
         return Result(slides, merges, sp, win, over)
     }
 
-    private fun canMove(): Boolean {
-        for (r in 0 until n) for (c in 0 until n) {
-            if (grid[r][c] == 0) return true
-            if (c + 1 < n && grid[r][c] == grid[r][c + 1]) return true
-            if (r + 1 < n && grid[r][c] == grid[r + 1][c]) return true
+    /** Quarter turn of the outer ring (n-1 steps); the inner tiles stay put. */
+    fun rotate(clockwise: Boolean): Result? {
+        if (over || won) return null
+        val steps = if (clockwise) n - 1 else -(n - 1)
+        val slides = ArrayList<Slide>()
+        for ((i, p) in ring.withIndex()) {
+            val v = grid[p.first][p.second]
+            val q = ringCell(i + steps)
+            if (v != 0) slides.add(Slide(p.first, p.second, q.first, q.second, v, false, i, steps))
         }
+        for (r in 1 until n - 1) for (c in 1 until n - 1) {
+            if (grid[r][c] != 0) slides.add(Slide(r, c, r, c, grid[r][c], false))
+        }
+        grid = rotated(grid, steps)
+        val sp = spawn()
+        if (!canMove()) over = true
+        return Result(slides, emptyList(), sp, false, over)
+    }
+
+    private fun rotated(g: Array<IntArray>, steps: Int): Array<IntArray> {
+        val next = Array(n) { g[it].clone() }
+        for ((i, p) in ring.withIndex()) {
+            val q = ringCell(i + steps)
+            next[q.first][q.second] = g[p.first][p.second]
+        }
+        return next
+    }
+
+    private fun hasMerge(g: Array<IntArray>): Boolean {
+        for (r in 0 until n) for (c in 0 until n) {
+            if (g[r][c] == 0) continue
+            if (c + 1 < n && g[r][c] == g[r][c + 1]) return true
+            if (r + 1 < n && g[r][c] == g[r + 1][c]) return true
+        }
+        return false
+    }
+
+    /** A move exists if there is room, a merge, or a ring turn that leads to a merge. */
+    private fun canMove(): Boolean {
+        for (r in 0 until n) for (c in 0 until n) if (grid[r][c] == 0) return true
+        if (hasMerge(grid)) return true
+        for (k in 1..3) if (hasMerge(rotated(grid, k * (n - 1)))) return true
         return false
     }
 }
